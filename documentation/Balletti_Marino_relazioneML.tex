@@ -1,0 +1,44 @@
+\documentclass[12pt,a4paper,fleqn]{article}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[italian]{babel}
+\date{\bigskip 22 luglio 2020}
+\author{\\\\\LARGE Autori:\\\\\large Marco Balletti\\Francesco Marino}
+\title{\LARGE \bfseries Machine Learning A.A. 2019/2020:\\Relazione Progetto NILM}
+\begin{document}
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+\tableofcontents
+\pagebreak
+
+\section{Introduzione}
+La presente relazione tratta dei modelli basati su reti neurali proposti per la risoluzione del \textsl{Non-Intrusive Load Monitoring (NILM)}. Lo scopo è quello di realizzare un'architettura di reti neurali in grado di predire, a partire da un valore (espresso in Watt) di consumo energetico totale di un'abitazione, il consumo relativo delle diverse apparecchiature, in particolare, in questo caso, di un frigorifero e di una lavastoviglie. Per la realizzazione del progetto è stato utilizzato \textsl{Python}, come linguaggio di programmazione, affiancato alle librerie \textsl{Numpy} (per la gestione efficiente di \textsl{array} di dati), \textsl{Pandas} (per il reperimento dei dati), \textsl{Tensorflow} e \textsl{Keras} (per la realizzazione e l'addestramento dell'architettura). La piattaforma di sviluppo utilizzata è \textsl{Google Colab} che mette a disposizione degli utenti la possibilità di addestrare delle reti neurali utilizzando anche delle \textsl{GPU} remote.
+
+\section{I dati}
+Per la realizzazione del progetto sono stati forniti tre  \textsl{dataset}: il primo contiene i consumi dell'intera abitazione presa in esame registrati con una granularità pari ad un secondo, il secondo ed il terzo contenenti, invece, i consumi relativi al frigorifero e alla lavastoviglie registrati con la stessa granularità e nello stesso intervallo temporale del primo \textsl{dataset}. 
+Visto l'ampio quantitativo di dati e la loro dimensione, si è ritenuto conveniente eseguirne il caricamento su \textsl{GitHub} in formato compresso (\texttt{.zip}), tale scelta è motivata anche dalla semplicità con cui, utilizzando \textsl{Python}, \textsl{Keras} e \textsl{Pandas}, è possibile trasformare un \textsl{dataset} compresso in un \textsl{dataframe}.
+
+\subsection{\textsl{Training}, \textsl{Validation} e \textsl{Test set}}
+Per garantire la correttezza dell'addestramento del modello e poterne valutare le prestazioni, è stato realizzato lo \textsl{split} del \textsl{dataframe} ricavato precedentemente in \textsl{training set}, \textsl{validation set} e \textsl{test set}. Il primo è stato utilizzato per eseguire l'addestramento dei modelli, il secondo per monitorarne l'\textsl{overfitting} e l'ultimo per valutare le metriche richieste (l'\textit{energy precision}, l'\textsl{energy recall} e l'\textsl{energy F1}) sul modello e poter confrontare le differenti possibili soluzioni tra loro. Durante la creazione di questi \textsl{set} e la conversione da \textsl{dataframe} ad \textsl{array Numpy}, si pone particolare attenzione al consumo della memoria RAM, vengono, infatti, eliminati tutti i riferimenti alle strutture dati non più necessarie dopo la conversione in modo da permettere al \textsl{garbage collector} di eliminarle e recuperare memoria.
+
+Poiché i dati in questione sono di tipo serie temporali, si è deciso di realizzare il \textsl{validation set} ed il \textsl{test set} con misurazioni che fossero temporalmente successive a quelle presenti all'interno del \textsl{training set}, tale relazione di ordine si mantiene anche tra \textsl{validation} e \textsl{test set}.
+
+\subsection{Normalizzazione}
+I dati così suddivisi vengono, quindi, sottoposti a normalizzazione sottraendo loro il valore medio e dividendoli per la deviazione standard, tale procedimento si è rivelato essere una strategia particolarmente efficace per la riduzione dei tempi di addestramento dei modelli. I valori necessari per effettuare questa trasformazione sui dati sono stati calcolati utilizzando il solo \textsl{training set}: si è proceduto, in particolare, calcolando la media e la deviazione standard dei consumi dell'abitazione, del frigorifero e della lavastoviglie su questo \textsl{set} di dati, il \textsl{training set} ed il \textsl{validation set} normalizzati sono stati ottenuti, quindi, andando a sottrarre la media relativa al tipo di dato (totale, frigorifero o lavastoviglie) e dividendo per la corrispondente deviazione standard precedentemente calcolate. Per quanto concerne il \textsl{test set}, l'operazione di normalizzazione è stata svolta solo sui consumi totali (sempre utilizzando i valori ricavati dal \textsl{training set}), non è stato necessario eseguirla sui corrispondenti valori di frigorifero e lavastoviglie poiché i dati ottenuti dalla predizione sul \textsl{set} in questione vengono denormalizzati (moltiplicando per la deviazione standard e sommando la media del \textsl{training set}) prima di eseguire la valutazione delle prestazioni.
+
+\subsection{I generatori}
+
+
+%\begin{figure}
+%\centering
+%\includegraphics[width=1.1\textwidth]{immagini/vecchiaOntologia.png}
+%\caption{Rappresentazione sintetica delle classi della vecchia ontologia}
+%\label{fig:vecchiaOntologia}
+%\end{figure}
+
+\end{document}
