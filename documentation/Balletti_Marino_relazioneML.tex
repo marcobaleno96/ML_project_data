@@ -6,15 +6,11 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage[italian]{babel}
-\date{\bigskip 22 luglio 2020}
-\author{\\\\\LARGE Autori:\\\\\large Marco Balletti\\Francesco Marino}
-\title{\LARGE \bfseries Machine Learning A.A. 2019/2020:\\Relazione Progetto NILM}
+\date{22 luglio 2020}
+\author{\\\\\large Marco Balletti, Francesco Marino}
+\title{Machine Learning A.A. 2019/2020:\\Relazione Progetto NILM}
 \begin{document}
-\begin{titlepage}
 \maketitle
-\end{titlepage}
-\tableofcontents
-\pagebreak
 
 \section{Introduzione}
 La presente relazione tratta dei modelli basati su reti neurali proposti per la risoluzione del \textsl{Non-Intrusive Load Monitoring (NILM)}. Lo scopo è quello di realizzare un'architettura di reti neurali in grado di predire, a partire da un valore (espresso in Watt) di consumo energetico totale di un'abitazione, il consumo relativo delle diverse apparecchiature, in particolare, in questo caso, di un frigorifero e di una lavastoviglie. Per la realizzazione del progetto è stato utilizzato \textsl{Python}, come linguaggio di programmazione, affiancato alle librerie \textsl{Numpy} (per la gestione efficiente di \textsl{array} di dati), \textsl{Pandas} (per il reperimento dei dati), \textsl{Tensorflow} e \textsl{Keras} (per la realizzazione e l'addestramento dell'architettura). La piattaforma di sviluppo utilizzata è \textsl{Google Colab} che mette a disposizione degli utenti la possibilità di addestrare delle reti neurali utilizzando anche delle \textsl{GPU} remote.
