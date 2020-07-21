@@ -5,6 +5,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{hyperref}
 \usepackage[italian]{babel}
 \date{22 luglio 2020}
 \author{\\\\\large Marco Balletti, Francesco Marino}
@@ -38,10 +39,24 @@ Prima di consegnare il progetto, infine, si è pensato di riaddestrare i modelli
 \section{I modelli}
 
 \subsection{Frigorifero}
+Per la predizione dei valori di consumo del frigorifero è stata utilizzata una modifica del \href{https://arxiv.org/abs/1612.09106}{modello \textsl{sequence-to-point} proposto da Zhang}.
+Il modello, in particolare, prende in input finestre di 2400 elementi, applica cinque layer Convoluzionali (ognuno, a parte l'ultimo, seguito da un layer di \textsl{Max Pooling}), esegue il \textsl{Dropout} ed il \textsl{Flatten} dei risultati per poi sottoporli a due \textsl{layer Dense} intervellati da un \textsl{Dropout}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{images/fridge.png}
+\caption{Rappresentazione grafica delle rete neurale utilizzata per il frigorifero}
+\label{fig:frigorifero}
+\end{figure}
+
+\subsubsection{\textsl{Cross Validation}}
+Per determinare la lunghezza della finestra da utilizzare, è stata scelta la tecnica della \textsl{cross validation}; per confrontare i risultati, gli addestramenti sono stati effettuati con \textsl{early stopping} (\textsl{patience} = 5) su 50 epoche e con finestre di 2000, 2200, 2400 e 2600 elementi (i valori scelti dipendono anche dalla struttura del \textsl{data set}).
+
+\subsubsection{Addestramento}
+Una volta scelta la lunghezza della finestra pari a 2400 elementi, il modello è stato addestrato in 100 epoche e con \textsl{early stopping} (\textsl{patience}=10), l'ottimizzatore scelto è \textsl{Adam} con funzione di \textsl{loss} la \textsl{mean squared error}. Come anticipato nei paragrafi precedenti, i dati utilizzati per l'addestramento e la valutazione del modello sono stati prodotti utilizzando dei generatori a partire dal \textsl{data set} iniziale.
+Il modello così addestrato è stato salvato e valutato utilizzando la metrica di \textsl{energy F1}, il risultato ottenuto è: \texttt{NUMERO}.
 
 \subsection{Lavastoviglie}
-
-\subsection{Valutazione dei modelli: \textsl{Cross Validation}}
 
 
 %\begin{figure}
