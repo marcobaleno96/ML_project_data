@@ -36,7 +36,7 @@ Per ovviare a questa problematica ed evitare anche di incorrere in \textsl{crash
 \subsection{Addestramento finale}
 Prima di consegnare il progetto, infine, si è pensato di riaddestrare i modelli con i parametri scelti su tutto il \textsl{data set}, in particolare, si è scelto di prendere ciò che prima era il \textsl{test set} come \textsl{validation set} ed inglobare il precedente \textsl{validation set} nel nuovo \textsl{training set} su cui eseguire l'addestramento finale.
 
-\section{I modelli}
+\section{I modelli finali proposti}
 
 \subsection{Frigorifero}
 Per la predizione dei valori di consumo del frigorifero è stata utilizzata una modifica del \href{https://arxiv.org/abs/1612.09106}{modello \textsl{sequence-to-point} proposto da Zhang}.
@@ -58,12 +58,21 @@ Il modello così addestrato è stato salvato e valutato utilizzando la metrica d
 
 \subsection{Lavastoviglie}
 
+\subsection{Alternative testate}
 
-%\begin{figure}
-%\centering
-%\includegraphics[width=1.1\textwidth]{immagini/vecchiaOntologia.png}
-%\caption{Rappresentazione sintetica delle classi della vecchia ontologia}
-%\label{fig:vecchiaOntologia}
-%\end{figure}
+\subsubsection{Modelli alternativi}
+Prima di giungere alle soluzioni finali proposte, sono stati eseguiti confronti tra differenti architetture (evitando di effettuare \textsl{tuning} dei parametri per ognuna), in particolare, è stato testato l'utilizzo di \href{https://arxiv.org/abs/1507.06594}{\textsl{Denoising Autoencoder (dAE)}}, del \href{https://arxiv.org/abs/1612.09106}{modello \textsl{sequence-to-point} "puro" proposto da Zhang} e del \href{http://nilmworkshop.org/2018/proceedings/Poster_ID20.pdf}{modello proposto dall'organizzazione CSEM} (in particolare, la soluzione finale per il frigorifero prende spunto dagli ultimi due \textsl{paper} riportati).
+
+\subsubsection{\textsl{Preprocessing} con \textsl{downsampling}}
+Il confronto del \textsl{data set} fornito per l'esecuzione del progetto con i \textsl{set} di dati utilizzati in letteratura ha evidenziato una forte differenza sulla granularità dei dati: il primo si compone di misurazioni prese ogni secondo, i secondi, tipicamente, di misure intervallate di sei secondi. Alla luce di questa differenza, si è provato a realizzare un \textsl{downsampling} all'interno delle finestre di dati restituite dai generatori in modo tale che, mantenendo fissa la dimensione, l'intervallo temporale coperto dalla finestra fosse maggiore. Questo approccio consente di evitare di dover rinunciare a priori ad una grande quantità di dati, è stato solamente necessario modificare la logica di costruzione dei batch di finestre affinché ognuna prendesse un elemento ogni sei, si noti che finestre consecutive, in questo modo, però, non avranno dati sovrapposti.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/windows.png}
+\caption{Rappresentazione grafica della generazione di finestre di dati con \textsl{downsampling}}
+\label{fig:finestre}
+\end{figure}
+
+Questo tipo di approccio si è rivelato non essere l'ideale per le reti scelte come soluzione finale e, quindi, si è rinunciato ad applicarlo.
 
 \end{document}
