@@ -33,37 +33,43 @@ L'addestramento e la valutazione delle prestazioni di modelli basati su dati di 
 
 Per ovviare a questa problematica ed evitare anche di incorrere in \textsl{crash} dell'\textsl{environment Google Colab}, si è proceduto realizzando dei generatori di dati, particolari strutture in grado di creare dinamicamente (all'accesso dell'elemento) \textsl{batch} di dati. L'idea alla base della realizzazione di queste strutture è quella di eseguire un addestramento basato su \textsl{batch} di finestre temporali, quando ne viene richiesto uno nuovo, il generatore determina gli indici degli elementi che faranno parte di ogni singola finestra appartenente al \textsl{batch} (le dimensioni di questo e della finestra sono parametri della struttura, lo scorrimento delle finestre è pari a un elemento), genera le finestre richieste e restituisce l'insieme di dati. Il risparmio di memoria è dovuto al fatto che questo approccio permette di istanziare le sole finestre necessarie in ogni momento, quelle appartenenti a \textsl{batch} precedenti, invece, perdendo ogni riferimento, possono essere deallocate dal \textsl{garbage collector} mantenendo l'utilizzo della RAM costante.
 
-\subsection{Addestramento finale}
-Prima di consegnare il progetto, infine, si è pensato di riaddestrare i modelli con i parametri scelti su tutto il \textsl{data set}, in particolare, si è scelto di prendere ciò che prima era il \textsl{test set} come \textsl{validation set} ed inglobare il precedente \textsl{validation set} nel nuovo \textsl{training set} su cui eseguire l'addestramento finale.
+\section{Il modello finale proposto}
 
-\section{I modelli finali proposti}
+Per la predizione dei valori di consumo del frigorifero e della lavastoviglie è stata utilizzata una modifica del \href{https://arxiv.org/abs/1612.09106}{modello \textsl{sequence-to-point} proposto da Zhang}.
+Il modello applica alla finestra in input cinque layer Convoluzionali (ognuno, a parte l'ultimo, seguito da un layer di \textsl{Max Pooling}), esegue il \textsl{Dropout} ed il \textsl{Flatten} dei risultati per poi sottoporli a due \textsl{layer Dense} intervellati da un \textsl{Dropout}.
 
-\subsection{Frigorifero}
-Per la predizione dei valori di consumo del frigorifero è stata utilizzata una modifica del \href{https://arxiv.org/abs/1612.09106}{modello \textsl{sequence-to-point} proposto da Zhang}.
-Il modello, in particolare, prende in input finestre di 2400 elementi, applica cinque layer Convoluzionali (ognuno, a parte l'ultimo, seguito da un layer di \textsl{Max Pooling}), esegue il \textsl{Dropout} ed il \textsl{Flatten} dei risultati per poi sottoporli a due \textsl{layer Dense} intervellati da un \textsl{Dropout}.
+Nel caso del frigorifero è stata utilizzata una finestra temporale di input contenente 2400 misurazioni (40 minuti), nel caso della lavastoviglie, invece, la finestra ha ampiezza di TODO:TOT elementi.
+
 
 \begin{figure}
 \centering
-\includegraphics[width=0.5\textwidth]{images/fridge.png}
-\caption{Rappresentazione grafica delle rete neurale utilizzata per il frigorifero}
-\label{fig:frigorifero}
+\includegraphics[width=0.5\textwidth]{images/model.png}
+\caption{Rappresentazione grafica delle rete neurale utilizzata per le due apparecchiature}
+\label{fig:modello}
 \end{figure}
 
-\subsubsection{\textsl{Cross Validation}}
-Per determinare la lunghezza della finestra da utilizzare, è stata scelta la tecnica della \textsl{cross validation}; per confrontare i risultati, gli addestramenti sono stati effettuati con \textsl{early stopping} (\textsl{patience} = 5) su 50 epoche e con finestre di 2000, 2200, 2400 e 2600 elementi (i valori scelti dipendono anche dalla struttura del \textsl{data set}).
+\subsection{\textsl{Cross Validation}}
+Per determinare le lunghezze delle finestre da utilizzare per ognuna delle apparecchiature, è stata scelta la tecnica della \textsl{cross validation}; per confrontare i risultati, gli addestramenti sono stati effettuati con \textsl{early stopping} (\textsl{patience} = 5) su 15 epoche (quantitativo inferiore rispetto a quello scelto per l'addestramento finale). Per il frigorifero sono state testate finestre di 2000, 2200, 2400 e 2600 elementi (i valori scelti dipendono anche dalla struttura del \textsl{data set}), mentre, per la lavastoviglie, finestre di dimensione 600, 700, 800, 900 e 1000 elementi.
 
-\subsubsection{Addestramento}
-Una volta scelta la lunghezza della finestra pari a 2400 elementi, il modello è stato addestrato in 100 epoche e con \textsl{early stopping} (\textsl{patience}=10), l'ottimizzatore scelto è \textsl{Adam} con funzione di \textsl{loss} la \textsl{mean squared error}. Come anticipato nei paragrafi precedenti, i dati utilizzati per l'addestramento e la valutazione del modello sono stati prodotti utilizzando dei generatori a partire dal \textsl{data set} iniziale.
-Il modello così addestrato è stato salvato e valutato utilizzando la metrica di \textsl{energy F1}, il risultato ottenuto è: \texttt{NUMERO}.
+\subsection{Addestramento}
+Una volta scelte le lunghezze delle finestre, il modello è stato addestrato in 100 epoche e con \textsl{early stopping} (\textsl{patience}=5), l'ottimizzatore scelto è \textsl{Adam} con funzione di \textsl{loss} la \textsl{mean squared error}. Come anticipato nei paragrafi precedenti, i dati utilizzati per l'addestramento e la valutazione del modello sono stati prodotti utilizzando dei generatori a partire dal \textsl{data set} iniziale, questi, trovandoci nel caso di \textsl{sequence-to-point} con predizione la mediana della finestra, sono stati configurati per porre all'inizio e alla fine del \textsl{set} di dati dei \textsl{dummy values} (elementi pari a 0) in modo tale da creare tante finestre quanti sono gli effettivi valori da predire e facendo sì che al punto mediano di ognuna corrispondesse il corretto valore da ottenere.
 
-\subsection{Lavastoviglie}
+Per garantire una maggiore velocità di convergenza dell'algoritmo, è stato utilizzato eseguito un \textsl{reshuffling} dei dati all'inizio di ogni epoca di addestramento.
+
+Sono state salvate due versioni del modello, una addestrata sui dati del frigorifero ed una addestrata sui dati della lavastoviglie, e valutate utilizzando la metrica di \textsl{energy F1}, i risultati ottenuti sono:
+
+\begin{tabbing}
+\hspace{2.50in}     \= \hspace{1.00in}		\kill
+\textsl{energy F1} per il frigorifero: \> \texttt{0.000000000000}\\
+\textsl{energy F1} per la lavastoviglie: \> \texttt{0.000000000000}
+\end{tabbing}
 
 \subsection{Alternative testate}
 
 \subsubsection{Modelli alternativi}
-Prima di giungere alle soluzioni finali proposte, sono stati eseguiti confronti tra differenti architetture (evitando di effettuare \textsl{tuning} dei parametri per ognuna), in particolare, è stato testato l'utilizzo di \href{https://arxiv.org/abs/1507.06594}{\textsl{Denoising Autoencoder (dAE)}}, del \href{https://arxiv.org/abs/1612.09106}{modello \textsl{sequence-to-point} "puro" proposto da Zhang} e del \href{http://nilmworkshop.org/2018/proceedings/Poster_ID20.pdf}{modello proposto dall'organizzazione CSEM} (in particolare, la soluzione finale per il frigorifero prende spunto dagli ultimi due \textsl{paper} riportati).
+Prima di giungere alla soluzione finale proposta, sono stati eseguiti confronti tra differenti architetture (evitando di effettuare \textsl{tuning} dei parametri per ognuna), in particolare, è stato testato l'utilizzo di \href{https://arxiv.org/abs/1507.06594}{\textsl{Denoising Autoencoder (dAE)}}, del \href{https://arxiv.org/abs/1612.09106}{modello \textsl{sequence-to-point} "puro" proposto da Zhang} e del \href{http://nilmworkshop.org/2018/proceedings/Poster_ID20.pdf}{modello proposto dall'organizzazione CSEM} (in particolare, la soluzione finale per il frigorifero prende spunto dagli ultimi due \textsl{paper} riportati).
 
-\subsubsection{\textsl{Preprocessing} con \textsl{downsampling}}
+\subsubsection{\textsl{Downsampling}}
 Il confronto del \textsl{data set} fornito per l'esecuzione del progetto con i \textsl{set} di dati utilizzati in letteratura ha evidenziato una forte differenza sulla granularità dei dati: il primo si compone di misurazioni prese ogni secondo, i secondi, tipicamente, di misure intervallate di sei secondi. Alla luce di questa differenza, si è provato a realizzare un \textsl{downsampling} all'interno delle finestre di dati restituite dai generatori in modo tale che, mantenendo fissa la dimensione, l'intervallo temporale coperto dalla finestra fosse maggiore. Questo approccio consente di evitare di dover rinunciare a priori ad una grande quantità di dati, è stato solamente necessario modificare la logica di costruzione dei batch di finestre affinché ognuna prendesse un elemento ogni sei, si noti che finestre consecutive, in questo modo, però, non avranno dati sovrapposti.
 
 \begin{figure}
