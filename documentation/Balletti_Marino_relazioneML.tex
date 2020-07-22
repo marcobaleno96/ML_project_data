@@ -38,7 +38,7 @@ Per ovviare a questa problematica ed evitare anche di incorrere in \textsl{crash
 Per la predizione dei valori di consumo del frigorifero e della lavastoviglie è stata utilizzata una modifica del \href{https://arxiv.org/abs/1612.09106}{modello \textsl{sequence-to-point} proposto da Zhang}.
 Il modello applica alla finestra in input cinque layer Convoluzionali (ognuno, a parte l'ultimo, seguito da un layer di \textsl{Max Pooling}), esegue il \textsl{Dropout} ed il \textsl{Flatten} dei risultati per poi sottoporli a due \textsl{layer Dense} intervellati da un \textsl{Dropout}.
 
-Nel caso del frigorifero è stata utilizzata una finestra temporale di input contenente 2400 misurazioni (40 minuti), nel caso della lavastoviglie, invece, la finestra ha ampiezza di TODO:TOT elementi.
+Nel caso del frigorifero è stata utilizzata una finestra temporale di input contenente 2400 misurazioni (40 minuti), nel caso della lavastoviglie, invece, la finestra ha ampiezza di 900 elementi (15 minuti).
 
 
 \begin{figure}
@@ -66,9 +66,9 @@ Per garantire una maggiore velocità di convergenza dell'algoritmo, è stato uti
 Sono state salvate due versioni del modello, una addestrata sui dati del frigorifero ed una addestrata sui dati della lavastoviglie, e valutate utilizzando la metrica di \textsl{energy F1}, i risultati ottenuti sono:
 
 \begin{tabbing}
-\hspace{2.50in}     \= \hspace{1.00in}		\kill
-\textsl{energy F1} per il frigorifero: \> \texttt{0.000000000000}\\
-\textsl{energy F1} per la lavastoviglie: \> \texttt{0.000000000000}
+\hspace{3.75in}     \= \hspace{1.00in}		\kill
+\textsl{energy F1} per il frigorifero valutata sul \textsl{test set}: \> \texttt{0.7745927}\\
+\textsl{energy F1} per la lavastoviglie valutata sul \textsl{test set}: \> \texttt{0.9533379}
 \end{tabbing}
 
 \subsection{Alternative testate}
